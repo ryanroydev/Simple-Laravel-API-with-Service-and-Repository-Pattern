@@ -1,0 +1,8 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon  # Include the Larastan extension
+
+parameters:
+  level: max  # Set the PHPStan strictness level (max for most strict)
+  paths:
+    - app   # Directory to analyze (typically 'app' for Laravel)
+

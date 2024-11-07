@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,7 +13,7 @@ use App\Http\Controllers\ProductController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('products/paginated', [ProductController::class, 'getAllByPage']);
+
 Route::get('/', function () {
     return view('welcome');
 });
