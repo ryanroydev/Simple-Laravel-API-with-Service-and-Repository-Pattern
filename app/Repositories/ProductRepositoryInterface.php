@@ -26,7 +26,7 @@ Interface ProductRepositoryInterface
     /**
      * Create a new product.
      *
-     * @param array{name: string, description: string, price: float, quantity: int} $data
+     * @param array<mixed> $data
      * @return Product
      */
     public function create(array $data): Product;
@@ -35,7 +35,7 @@ Interface ProductRepositoryInterface
      * Update an existing product by its ID.
      *
      * @param int $id The ID of the product.
-     * @param array{name: string, description: string, price: float} $data
+     * @param array<mixed> $data
      * @return Product
      */
     public function update(int $id, array $data): Product;
@@ -53,7 +53,7 @@ Interface ProductRepositoryInterface
      * Delete a product by its ID.
      *
      * @param int $id The ID of the product.
-     * @return bool Returns true if the product was deleted successfully, false otherwise.
+     * @return bool|null Returns true if the product was deleted successfully, false otherwise.
      */  
-    public function delete(int $id): bool;
+    public function delete(int $id): bool|null;
 }

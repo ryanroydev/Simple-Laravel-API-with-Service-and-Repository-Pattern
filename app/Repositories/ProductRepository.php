@@ -17,7 +17,7 @@ class ProductRepository implements ProductRepositoryInterface
     /**
      * Get a paginated list of products.
      *
-     * @param int $perPage The number of products per page.
+     * @param int $per_page The number of products per page.
      * @return LengthAwarePaginator<Product>
      */
     public function getAllByPage(int $per_page): LengthAwarePaginator
@@ -39,7 +39,7 @@ class ProductRepository implements ProductRepositoryInterface
     /**
      * Create a new product.
      *
-     * @param array{name: string, description: string, price: float, quantity: int} $data
+     * @param array<mixed> $data
      * @return Product
      */
     public function create(array $data): Product
@@ -51,7 +51,7 @@ class ProductRepository implements ProductRepositoryInterface
      * Update an existing product by its ID.
      *
      * @param int $id The ID of the product.
-     * @param array{name: string, description: string, price: float} $data
+     * @param array<mixed> $data
      * @return Product
      */
     public function update(int $id, array $data): Product
@@ -83,9 +83,9 @@ class ProductRepository implements ProductRepositoryInterface
      * Delete a product by its ID.
      *
      * @param int $id The ID of the product.
-     * @return bool Returns true if the product was deleted successfully, false otherwise.
+     * @return bool|null Returns true if the product was deleted successfully, false otherwise.
      */    
-    public function delete(int $id): bool
+    public function delete(int $id): bool|null
     {
         $product =  Product::findOrFail($id);
         return $product->delete();

@@ -27,6 +27,7 @@ class ProductController extends Controller
     public function index(Request $request) : JsonResponse
     {   
         $per_page =  (int) $request->input('per_page', 10);
+        
         $products = $this->productRepositoryInterface->getAllByPage($per_page);
         
         return response()->success('Products fetched successfully', $products);
@@ -82,7 +83,7 @@ class ProductController extends Controller
     public function updateStock(ProductUpdateStockRequest $request, string $id)  : JsonResponse
     {
         $data = $request->validated();
-        $product = $this->productRepositoryInterface->updateStock((int) $id, $data['quantity']);
+        $product = $this->productRepositoryInterface->updateStock((int) $id, (int) $data['quantity']);
 
         return response()->success('Product stock updated successfully', $product);
     }

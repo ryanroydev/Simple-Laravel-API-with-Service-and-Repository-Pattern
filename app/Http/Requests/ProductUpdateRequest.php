@@ -26,7 +26,7 @@ class ProductUpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:100|unique:products,name,' . ($productId ?: 'NULL'), // Handle null case
             'description' => 'required|string|max:255',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0',
         ];
     }
 }
