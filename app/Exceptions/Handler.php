@@ -41,7 +41,7 @@ class Handler extends ExceptionHandler
 
         // Handle generic exceptions (500) for API requests
         $this->renderable(function (Throwable $e, Request $request) {
-            return $this->handleApiError($request, 'An error occurred! Please try again later.', 500);
+           // return $this->handleApiError($request, 'An error occurred! Please try again later.', 500);
         });
 
         // Reportable exceptions
