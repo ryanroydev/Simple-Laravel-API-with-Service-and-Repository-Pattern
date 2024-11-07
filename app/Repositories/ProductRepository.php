@@ -2,7 +2,6 @@
 namespace App\Repositories;
 
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -58,22 +57,6 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $product =  Product::findOrFail($id);
         $product->update($data);
-        $product->save();
-
-        return $product;
-    }
-
-    /**
-     * Update the stock (quantity) of an existing product.
-     *
-     * @param int $id The ID of the product.
-     * @param int $quantity The quantity to add (or subtract).
-     * @return Product
-     */
-    public function updateStock(int $id, int $quantity): Product
-    {
-        $product =  Product::findOrFail($id);
-        $product->quantity += $quantity;
         $product->save();
 
         return $product;
