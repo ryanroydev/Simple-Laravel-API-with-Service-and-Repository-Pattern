@@ -41,15 +41,6 @@ Interface ProductRepositoryInterface
     public function update(int $id, array $data): Product;
 
     /**
-     * Update the stock (quantity) of an existing product.
-     *
-     * @param int $id The ID of the product.
-     * @param int $quantity The quantity to add (or subtract).
-     * @return Product
-     */
-    public function updateStock(int $id, int $quantity): Product;
-
-    /**
      * Delete a product by its ID.
      *
      * @param int $id The ID of the product.

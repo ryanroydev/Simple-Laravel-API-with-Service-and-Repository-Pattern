@@ -4,18 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use App\Repositories\ProductRepositoryInterface;
+use App\Services\InventoryService;
 use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
 use App\Http\Requests\ProductUpdateStockRequest;
 
 class ProductController extends Controller
 {
-    private ProductRepositoryInterface $productRepositoryInterface;
+    private InventoryService $inventoryService;
     
-    public function __construct(ProductRepositoryInterface $productRepositoryInterface) {
+    public function __construct(InventoryService $inventoryService) {
 
-        $this->productRepositoryInterface = $productRepositoryInterface;
+        $this->inventoryService = $inventoryService;
     }
 
     /**
@@ -28,7 +28,7 @@ class ProductController extends Controller
     {   
         $per_page =  (int) $request->input('per_page', 10);
         
-        $products = $this->productRepositoryInterface->getAllByPage($per_page);
+        $products = $this->inventoryService->getInventory($per_page);
         
         return response()->success('Products fetched successfully', $products);
     }
@@ -41,7 +41,7 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request)  : JsonResponse
     {
-        $product = $this->productRepositoryInterface->create($request->validated());
+        $product = $this->inventoryService->createProduct($request->validated());
         
         return response()->success('Product created successfully', $product);
     }
@@ -54,7 +54,7 @@ class ProductController extends Controller
      */
     public function show(string $id)  : JsonResponse
     {
-        $product = $this->productRepositoryInterface->getById((int) $id);
+        $product = $this->inventoryService->getProduct((int) $id);
 
         return response()->success('Product details fetched successfully', $product);
     }
@@ -68,7 +68,7 @@ class ProductController extends Controller
      */
     public function update(ProductUpdateRequest $request, string $id)  : JsonResponse
     {
-        $product = $this->productRepositoryInterface->update((int) $id, $request->validated());
+        $product = $this->inventoryService->updateProduct((int) $id, $request->validated());
 
         return response()->success('Product updated successfully', $product);
     }
@@ -83,7 +83,7 @@ class ProductController extends Controller
     public function updateStock(ProductUpdateStockRequest $request, string $id)  : JsonResponse
     {
         $data = $request->validated();
-        $product = $this->productRepositoryInterface->updateStock((int) $id, (int) $data['quantity']);
+        $product = $this->inventoryService->updateProductStock((int) $id, (int) $data['quantity']);
 
         return response()->success('Product stock updated successfully', $product);
     }
@@ -96,7 +96,7 @@ class ProductController extends Controller
      */
     public function destroy(string $id)  : JsonResponse
     {
-        $this->productRepositoryInterface->delete((int) $id);
+        $this->inventoryService->deleteProduct((int) $id);
 
         return response()->success("Product deleted successfully", []);
     }
