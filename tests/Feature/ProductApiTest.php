@@ -1,7 +1,7 @@
 <?php
 
 namespace Tests\Feature;
-
+use App\Models\User;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -9,6 +9,13 @@ use Tests\TestCase;
 class ProductApiTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function createAuthenticatedUserToken(){
+
+       $user =  User::factory()->create();
+
+       return $user->createToken('laravel-api')->plainTextToken;
+    }
 
     public function test_can_create_product()
     {
@@ -19,7 +26,11 @@ class ProductApiTest extends TestCase
             'price' => fake()->randomFloat(2, 1, 1000),
         ];
 
-        $response = $this->postJson('/api/products', $data);
+        $token = $this->createAuthenticatedUserToken();
+
+        $response = $this->postJson('/api/products', $data,[
+            'Authorization' => "Bearer $token"
+        ]);
         $response->assertStatus(200);
         $response->assertJsonFragment(['name' =>  $data['name']]);
     }
@@ -34,7 +45,12 @@ class ProductApiTest extends TestCase
             'price' => fake()->randomFloat(2, 1, 1000),
         ];
 
-        $response = $this->putJson("/api/products/{$product->id}", $data);
+        $token = $this->createAuthenticatedUserToken();
+
+        $response = $this->putJson("/api/products/{$product->id}", $data,[
+            'Authorization' => "Bearer $token"
+        ]);
+
         $response->assertStatus(200);
         $response->assertJsonFragment(['message' => "Product updated successfully"]);
     }
@@ -43,7 +59,13 @@ class ProductApiTest extends TestCase
     {
         $product = Product::factory()->create();
         $data = ['quantity' => 5];
-        $response = $this->putJson("/api/products/{$product->id}/updateStock",$data);
+
+        $token = $this->createAuthenticatedUserToken();
+
+        $response = $this->putJson("/api/products/{$product->id}/updateStock",$data,[
+            'Authorization' => "Bearer $token"
+        ]);
+
         $response->assertStatus(200);
         $response->assertJsonFragment(['quantity' => $product->quantity + $data['quantity'] ]);
     }
@@ -52,7 +74,12 @@ class ProductApiTest extends TestCase
     {
         $product = Product::factory()->create();
 
-        $response = $this->deleteJson("/api/products/{$product->id}");
+        $token = $this->createAuthenticatedUserToken();
+
+        $response = $this->deleteJson("/api/products/{$product->id}", [], [
+            'Authorization' => "Bearer $token"
+        ]);
+
         $response->assertStatus(200);
         $response->assertJsonFragment(['message' => 'Product deleted successfully']);
     }
@@ -61,7 +88,12 @@ class ProductApiTest extends TestCase
     {
         $product = Product::factory()->create();
 
-        $response = $this->getJson("/api/products/{$product->id}");
+        $token = $this->createAuthenticatedUserToken();
+
+        $response = $this->getJson("/api/products/{$product->id}",[
+            'Authorization' => "Bearer $token"
+        ]);
+
         $response->assertStatus(200);
         $response->assertJsonFragment(['name' => $product->name]);
     }
@@ -70,7 +102,12 @@ class ProductApiTest extends TestCase
     {
         $productId = 99999999999999;
 
-        $response = $this->getJson("/api/products/{$productId}");
+        $token = $this->createAuthenticatedUserToken();
+
+        $response = $this->getJson("/api/products/{$productId}",[
+            'Authorization' => "Bearer $token"
+        ]);
+
         $response->assertStatus(404);
         $response->assertJsonFragment(['message' =>'Object Not Found']);
     }
