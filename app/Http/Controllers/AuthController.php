@@ -2,19 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
 use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Laravel\Sanctum\PersonalAccessToken;
 
 
 class AuthController extends Controller
 {
+    protected AuthService $authService;
+    
+    public function __construct(AuthService $authService) {
+        $this->authService = $authService;
+    }
     /**
      * Log the user in and return a token.
      * 
@@ -24,20 +31,16 @@ class AuthController extends Controller
     public function login(AuthLoginRequest $request) : JsonResponse
     {
 
+        $user = $this->authService->login($request->validated());
 
-        // Check if the user exists and the password is correct
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+        if(!$user){
+            return response()->error( 'Invalid credentials', 401);
         }
 
-        // Generate a token for the authenticated user
-        $token = $user->createToken('laravel-api-token')->plainTextToken;
-
-        return response()->success( 'Successfully logged in', ['user' => $user,'token' => $token]);
+        return response()->success( 'Successfully logged in', [
+            'user' => $user,
+            'token' => $user->createToken('laravel-api-token')->plainTextToken
+        ]);
     }
 
     /**
@@ -48,9 +51,10 @@ class AuthController extends Controller
      */
     public function logout(Request $request) : JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        
+        $this->authService->logout($request->user());
 
-        return response()->success('Successfully logged out');
+        return response()->success('Logged out successfully');
     }
 
     /**
@@ -62,16 +66,11 @@ class AuthController extends Controller
     public function register(AuthRegisterRequest $request) : JsonResponse
     {
 
-        // Create the user
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-        ]);
+        $user = $this->authService->register($request->validated());
 
         // Create a token for the new user
         $token = $user->createToken('laravel-api-token')->plainTextToken;
 
-        return response()->success( 'Successfully logged in', ['user' => $user,'token' => $token]);
+        return response()->success( 'Account Created Successfully!', ['user' => $user,'token' => $token], 201);
     }
 }

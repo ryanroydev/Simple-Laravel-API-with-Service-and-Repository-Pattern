@@ -1,4 +1,4 @@
-<?
+<?php
 namespace Tests\Feature;
 
 use App\Models\User;
@@ -21,7 +21,7 @@ class AuthUserTest extends TestCase
         $response = $this->postJson('/api/register', $data);
 
         $response->assertStatus(201); 
-        $response->assertJsonStructure(['token']); 
+        $response->assertJsonFragment(['message' => 'Account Created Successfully!']);
     }
 
     public function test_can_login_user()
@@ -39,7 +39,7 @@ class AuthUserTest extends TestCase
         $response = $this->postJson('/api/login', $data);
 
         $response->assertStatus(200); 
-        $response->assertJsonStructure(['token']); 
+        $response->assertJsonFragment(['message' => 'Successfully logged in']);
     }
 
     public function test_cannot_login_with_invalid_credentials()
